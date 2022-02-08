@@ -8,6 +8,8 @@ export default function App() {
       <StatusBar style="auto" />
     </View>
   );
+import StartScreen from "./components/StartScreen";
+import ChatScreen from "./components/ChatScreen";
 }
 
 const styles = StyleSheet.create({
