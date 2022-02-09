@@ -1,6 +1,13 @@
 import React, { Component } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
+import { Bubble, GiftedChat } from "react-native-gifted-chat";
 
 export default class ChatScreen extends Component {
   constructor(props) {
@@ -10,7 +17,7 @@ export default class ChatScreen extends Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount(props) {
     this.setState({
       messages: [
         {
@@ -23,6 +30,12 @@ export default class ChatScreen extends Component {
             avatar: "https://placeimg.com/140/140/any",
           },
         },
+        {
+          _id: this.props.route.params.name,
+          text: this.props.route.params.name + " has entered the chat",
+          createdAt: new Date(),
+          system: true,
+        },
       ],
     });
   }
@@ -31,6 +44,19 @@ export default class ChatScreen extends Component {
     this.setState((previousState) => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }));
+  }
+
+  renderBubble(props) {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: "#A211E2",
+          },
+        }}
+      />
+    );
   }
 
   render() {
@@ -42,13 +68,19 @@ export default class ChatScreen extends Component {
     const { bgColor } = this.props.route.params;
 
     return (
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={(messages) => this.onSend(messages)}
-        user={{
-          _id: 1,
-        }}
-      />
+      <View style={styles.container}>
+        {Platform.OS === "android" ? (
+          <KeyboardAvoidingView behavior="height" />
+        ) : null}
+        <GiftedChat
+          renderBubble={this.renderBubble.bind(this)}
+          messages={this.state.messages}
+          onSend={(messages) => this.onSend(messages)}
+          user={{
+            _id: 1,
+          }}
+        />
+      </View>
     );
   }
 }
@@ -56,8 +88,6 @@ export default class ChatScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   text: {
     fontSize: 30,
@@ -65,3 +95,19 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
+
+{
+  /* <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: bgColor,
+        }}
+      >
+        <Text style={styles.text}>Welcome to the chat room!</Text>
+      </View>
+    );
+  }
+} */
+}
