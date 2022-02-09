@@ -40,12 +40,14 @@ export default class ChatScreen extends Component {
     });
   }
 
+  // Feed messages sent into the chat screen
   onSend(messages = []) {
     this.setState((previousState) => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }));
   }
 
+  // A function to customize the faetures of the render bubble prop
   renderBubble(props) {
     return (
       <Bubble
