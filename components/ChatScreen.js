@@ -26,6 +26,13 @@ export default class ChatScreen extends Component {
     super(props);
     this.state = {
       messages: [],
+      uid: "0",
+      loggedInText: "",
+      user: {
+        _id: "",
+        name: "",
+        avatar: "",
+      },
     };
 
     if (!firebase.apps.length) {
