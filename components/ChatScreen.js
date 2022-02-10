@@ -122,9 +122,14 @@ export default class ChatScreen extends Component {
 
   // Feed messages sent into the chat screen
   onSend(messages = []) {
-    this.setState((previousState) => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }));
+    this.setState(
+      (previousState) => ({
+        messages: GiftedChat.append(previousState.messages, messages),
+      }),
+      () => {
+        this.addMessages();
+      }
+    );
   }
 
   // A function to customize the faetures of the render bubble prop
@@ -151,6 +156,7 @@ export default class ChatScreen extends Component {
 
     return (
       <View style={styles.container}>
+        <Text>{this.state.loggedInText}</Text>
         {Platform.OS === "android" ? (
           <KeyboardAvoidingView behavior="height" />
         ) : null}
@@ -159,7 +165,9 @@ export default class ChatScreen extends Component {
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={{
-            _id: 1,
+            _id: this.state.user._id,
+            name: this.state.name,
+            avatar: this.state.user.avatar,
           }}
         />
       </View>
