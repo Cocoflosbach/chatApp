@@ -8,6 +8,18 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { initializeApp } from "firebase/app";
+import * as firebase from "firebase";
+import "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC-HCJXQRRhSnHO49ztWU3EgIhTiHsL3rk",
+  authDomain: "chatapp-8b9d0.firebaseapp.com",
+  projectId: "chatapp-8b9d0",
+  storageBucket: "chatapp-8b9d0.appspot.com",
+  messagingSenderId: "484893773919",
+  appId: "1:484893773919:web:f67cc79ea0a9768b144bea",
+};
 
 export default class ChatScreen extends Component {
   constructor(props) {
@@ -15,6 +27,13 @@ export default class ChatScreen extends Component {
     this.state = {
       messages: [],
     };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    // create reference to messages collection in constructor
+    this.referenceChatMessages = firebase.firestore().collection("messages");
   }
 
   componentDidMount(props) {
