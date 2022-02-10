@@ -78,13 +78,45 @@ export default class ChatScreen extends Component {
           name: this.state.user.name,
           avatar: "https://placeimg.com/140/140/any",
         },
-        {
-          _id: this.props.route.params.name,
-          text: this.props.route.params.name + " has entered the chat",
-          createdAt: new Date(),
-          system: true,
-        },
-      ],
+      });
+      // This listens for updates made to the collection
+      this.unsubscribe = this.referenceChatMessages
+        .orderBy("createdAt", "desc")
+        .onSnapshot(this.onCollectionUpdate);
+    });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+    this.authUnsubscribe();
+  }
+
+  onCollectionUpdate = (querySnapshot) => {
+    const messages = [];
+    // go through each document
+    querySnapshot.forEach((doc) => {
+      // get the QueryDocumentSnapshot's data
+      let data = doc.data();
+      messages.push({
+        _id: data._id,
+        text: data.text,
+        createdAt: data.createdAt.toDate(),
+        user: data.user,
+      });
+    });
+    this.setState({
+      messages,
+    });
+  };
+
+  //add messages to the database
+  addMessages() {
+    const message = this.state.messages[0];
+    this.referenceChatMessages.add({
+      _id: message._id,
+      text: message.text,
+      createdAt: message.createdAt,
+      user: this.state.user,
     });
   }
 
