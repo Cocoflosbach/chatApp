@@ -43,18 +43,40 @@ export default class ChatScreen extends Component {
     this.referenceChatMessages = firebase.firestore().collection("messages");
   }
 
-  componentDidMount(props) {
-    this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: "Hello developer",
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: "React Native",
-            avatar: "https://placeimg.com/140/140/any",
+  componentDidMount() {
+    this.referenceChatMessages = firebase.firestore().collection("messages");
+    if (
+      this.referenceChatMessages !== undefined &&
+      this.referenceChatMessages !== null
+    ) {
+      this.unsubscribe = this.referenceChatMessages.onSnapshot(
+        this.onCollectionUpdate
+      );
+    } else {
+      alert("Something is wrong!");
+    }
+
+    // use firebase.auth() to authenticate a user
+    this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+      if (!user) {
+        await firebase.auth().signInAnonymously();
+      }
+
+      this.setState({
+        uid: user.uid,
+        messages: [
+          [this.state.messages],
+          {
+            _id: this.props.route.params.name,
+            text: this.props.route.params.name + " has entered the chat",
+            createdAt: new Date(),
+            system: true,
           },
+        ],
+        user: {
+          _id: user.uid,
+          name: this.state.user.name,
+          avatar: "https://placeimg.com/140/140/any",
         },
         {
           _id: this.props.route.params.name,
