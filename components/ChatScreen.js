@@ -87,6 +87,7 @@ export default class ChatScreen extends Component {
   }
 
   componentWillUnmount() {
+    //stop listening to authentication and collection changes
     this.unsubscribe();
     this.authUnsubscribe();
   }
@@ -185,19 +186,3 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
-
-{
-  /* <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: bgColor,
-        }}
-      >
-        <Text style={styles.text}>Welcome to the chat room!</Text>
-      </View>
-    );
-  }
-} */
-}
