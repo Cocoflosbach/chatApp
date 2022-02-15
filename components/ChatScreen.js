@@ -12,6 +12,7 @@ import { initializeApp } from "firebase/app";
 import * as firebase from "firebase";
 import "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-HCJXQRRhSnHO49ztWU3EgIhTiHsL3rk",
@@ -34,6 +35,7 @@ export default class ChatScreen extends Component {
         name: "",
         avatar: "",
       },
+      isConnected: true,
     };
 
     if (!firebase.apps.length) {
@@ -93,6 +95,15 @@ export default class ChatScreen extends Component {
     } else {
       alert("Something is wrong!");
     }
+
+    //Check if the user is online or offline
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        console.log("online");
+      } else {
+        console.log("offline");
+      }
+    });
 
     // use firebase.auth() to authenticate a user
     this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
