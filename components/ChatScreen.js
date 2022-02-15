@@ -7,7 +7,12 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from "react-native";
-import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import {
+  Bubble,
+  GiftedChat,
+  InputToolbar,
+  SystemMessage,
+} from "react-native-gifted-chat";
 import { initializeApp } from "firebase/app";
 import * as firebase from "firebase";
 import "firebase/firestore";
@@ -84,6 +89,7 @@ export default class ChatScreen extends Component {
   }
 
   componentDidMount() {
+    this.getMessages();
     this.referenceChatMessages = firebase.firestore().collection("messages");
     if (
       this.referenceChatMessages !== undefined &&
@@ -128,6 +134,7 @@ export default class ChatScreen extends Component {
           avatar: "https://placeimg.com/140/140/any",
         },
       });
+
       // This listens for updates made to the collection
       this.unsubscribe = this.referenceChatMessages
         .orderBy("createdAt", "desc")
@@ -178,6 +185,7 @@ export default class ChatScreen extends Component {
       }),
       () => {
         this.addMessages();
+        this.saveMessages();
       }
     );
   }
@@ -189,8 +197,32 @@ export default class ChatScreen extends Component {
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: "#A211E2",
+            backgroundColor: "#D17A22",
           },
+        }}
+        textStyle={{
+          right: {
+            color: "white",
+          },
+        }}
+      />
+    );
+  }
+
+  // A function to customize the rendering of the input tool bar
+  renderInputToolbar(props) {
+    if (this.state.isConnected == false) {
+    } else {
+      return <InputToolbar {...props} />;
+    }
+  }
+
+  renderSystemMessage(props) {
+    return (
+      <SystemMessage
+        {...props}
+        textStyle={{
+          color: "#fff",
         }}
       />
     );
@@ -205,13 +237,19 @@ export default class ChatScreen extends Component {
     const { bgColor } = this.props.route.params;
 
     return (
-      <View style={styles.container}>
+      <View
+        style={{
+          backgroundColor: bgColor ? bgColor : "#FFFDF7",
+          flex: 1,
+        }}
+      >
         <Text>{this.state.loggedInText}</Text>
         {Platform.OS === "android" ? (
           <KeyboardAvoidingView behavior="height" />
         ) : null}
         <GiftedChat
           renderBubble={this.renderBubble.bind(this)}
+          renderSystemMessage={this.renderSystemMessage.bind(this)}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={{
