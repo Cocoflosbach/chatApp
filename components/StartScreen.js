@@ -8,6 +8,7 @@ import {
   ImageBackground,
   Pressable,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import BackgroundImage from "../assets/BackgroundImage.png";
 
@@ -24,10 +25,10 @@ export default class StartScreen extends Component {
 
   // Chat background color options to choose from
   colors = {
-    black: "#090C08",
-    plum: "#474056",
-    grey: "#8A95A5",
-    olive: "#B9C6AE",
+    peach: "#F7D4BC",
+    indigo: "#360568",
+    green: "#283845",
+    pink: "#CFA5B4",
   };
 
   // this finction is called when a color is chosen
@@ -38,20 +39,23 @@ export default class StartScreen extends Component {
   };
 
   render() {
-    const { black, plum, grey, olive } = this.colors;
+    const { peach, indigo, green, pink } = this.colors;
     return (
-      <ImageBackground
-        source={BackgroundImage}
-        resizeMode="cover"
-        style={styles.image}
-      >
-        <View style={styles.container}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={BackgroundImage}
+          resizeMode="cover"
+          style={styles.image}
+        >
           <View style={styles.titleBox}>
             <Text style={styles.titleText}>ChatMeApp</Text>
           </View>
 
           <View style={styles.inputBox}>
             <TextInput
+              accessible={true}
+              accessibilityLabel="type your name here"
+              accessibilityHint="This should be the name you would like to use in chat session"
               style={styles.inputStyle}
               onChangeText={(name) => this.setState({ name })}
               value={this.state.name}
@@ -62,25 +66,40 @@ export default class StartScreen extends Component {
               <Text style={styles.colorBoxText}>Choose background color</Text>
               <View style={styles.colorBox}>
                 <TouchableOpacity
+                  accessible={true}
+                  accessibilityLabel="peach"
+                  accessibilityHint="choose peach background"
                   style={styles.color1}
-                  onPress={() => this.changeBackgroundColor(black)}
+                  onPress={() => this.changeBackgroundColor(peach)}
                 ></TouchableOpacity>
                 <TouchableOpacity
+                  accessible={true}
+                  accessibilityLabel="indigo"
+                  accessibilityHint="choose indigo background"
                   style={styles.color2}
-                  onPress={() => this.changeBackgroundColor(plum)}
+                  onPress={() => this.changeBackgroundColor(indigo)}
                 ></TouchableOpacity>
                 <TouchableOpacity
+                  accessible={true}
+                  accessibilityLabel="green"
+                  accessibilityHint="choose green background"
                   style={styles.color3}
-                  onPress={() => this.changeBackgroundColor(grey)}
+                  onPress={() => this.changeBackgroundColor(green)}
                 ></TouchableOpacity>
                 <TouchableOpacity
+                  accessible={true}
+                  accessibilityLabel="pink"
+                  accessibilityHint="choose pink background"
                   style={styles.color4}
-                  onPress={() => this.changeBackgroundColor(olive)}
+                  onPress={() => this.changeBackgroundColor(pink)}
                 ></TouchableOpacity>
               </View>
             </View>
 
             <Pressable
+              accessible={true}
+              accessibilityLabel="start"
+              accessibilityHint="Go to chat room"
               style={styles.button}
               onPress={() =>
                 this.props.navigation.navigate("ChatScreen", {
@@ -92,8 +111,8 @@ export default class StartScreen extends Component {
               <Text style={styles.pressableText}>Go to Chat room</Text>
             </Pressable>
           </View>
-        </View>
-      </ImageBackground>
+        </ImageBackground>
+      </View>
     );
   }
 }
@@ -121,10 +140,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
+    width: "100%",
   },
   titleBox: {
     flex: 10,
     justifyContent: "center",
+    alignItems: "center",
   },
   titleText: {
     fontSize: 45,
@@ -133,15 +154,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputBox: {
-    height: 400,
-    width: 400,
-    flexDirection: "column",
+    flex: 10,
+    flexShrink: 0,
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 4,
     opacity: 10,
-    marginBottom: 100,
+    marginBottom: 200,
+    opacity: 0.8,
   },
   pressableText: {
     fontWeight: "500",
@@ -159,28 +180,28 @@ const styles = StyleSheet.create({
   },
 
   color1: {
-    backgroundColor: "#090C08",
+    backgroundColor: "#F7D4BC",
     height: 50,
     width: 50,
     borderRadius: 25,
     marginRight: 8,
   },
   color2: {
-    backgroundColor: "#474056",
+    backgroundColor: "#360568",
     height: 50,
     width: 50,
     borderRadius: 25,
     marginRight: 8,
   },
   color3: {
-    backgroundColor: "#8A95A5",
+    backgroundColor: "#283845",
     height: 50,
     width: 50,
     borderRadius: 25,
     marginRight: 8,
   },
   color4: {
-    backgroundColor: "#B9C6AE",
+    backgroundColor: "#CFA5B4",
     height: 50,
     width: 50,
     borderRadius: 25,
