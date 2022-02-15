@@ -11,6 +11,7 @@ import { Bubble, GiftedChat } from "react-native-gifted-chat";
 import { initializeApp } from "firebase/app";
 import * as firebase from "firebase";
 import "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-HCJXQRRhSnHO49ztWU3EgIhTiHsL3rk",
@@ -41,6 +42,43 @@ export default class ChatScreen extends Component {
 
     // create reference to messages collection in constructor
     this.referenceChatMessages = firebase.firestore().collection("messages");
+  }
+
+  //get messages from AsynStorage
+  async getMessages() {
+    let messages = "";
+    try {
+      messages = (await AsyncStorage.getItem("messages")) || [];
+      this.setState({
+        messages: JSON.parse(messages),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  //save messages to Asynstorage
+  async saveMessages() {
+    try {
+      await AsyncStorage.setItem(
+        "messages",
+        JSON.stringify(this.state.messages)
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  //remove messages from Asynstorage
+  async deleteMessages() {
+    try {
+      await AsyncStorage.removeItem("messages");
+      this.setState({
+        messages: [],
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   componentDidMount() {
