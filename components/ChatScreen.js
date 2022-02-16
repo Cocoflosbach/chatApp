@@ -111,22 +111,24 @@ export default class ChatScreen extends Component {
 
             this.setState({
               uid: user.uid,
-              messages: [
-                [this.state.messages],
-                {
-                  _id: this.props.route.params.name,
-                  text: this.props.route.params.name + " has entered the chat",
-                  createdAt: new Date(),
-                  system: true,
-                },
-              ],
+
               user: {
                 _id: user.uid,
                 name: this.state.user.name,
                 avatar: "https://placeimg.com/140/140/any",
               },
+              isConnected: true,
             });
           });
+
+        const systemMsg = {
+          _id: this.props.route.params.name,
+          text: this.props.route.params.name + " has entered the chat",
+          createdAt: new Date(),
+          system: true,
+        };
+        this.referenceChatMessages.add(systemMsg);
+
         this.saveMessages();
       } else {
         this.setState({ isConnected: false });
@@ -134,18 +136,6 @@ export default class ChatScreen extends Component {
         this.getMessages();
       }
     });
-
-    this.referenceChatMessages = firebase.firestore().collection("messages");
-    if (
-      this.referenceChatMessages !== undefined &&
-      this.referenceChatMessages !== null
-    ) {
-      this.unsubscribe = this.referenceChatMessages.onSnapshot(
-        this.onCollectionUpdate
-      );
-    } else {
-      alert("Something is wrong!");
-    }
   }
 
   componentWillUnmount() {
