@@ -89,7 +89,52 @@ export default class ChatScreen extends Component {
   }
 
   componentDidMount() {
-    this.getMessages();
+    let name = this.props.route.params.name;
+    //Check if the user is online or offline
+    NetInfo.fetch().then((connection) => {
+      if (connection.isConnected) {
+        this.setState({ isConnected: true });
+        console.log("online");
+
+        // This listens for updates made to the collection
+        this.unsubscribe = this.referenceChatMessages
+          .orderBy("createdAt", "desc")
+          .onSnapshot(this.onCollectionUpdate);
+
+        // use firebase.auth() to authenticate a user
+        this.authUnsubscribe = firebase
+          .auth()
+          .onAuthStateChanged(async (user) => {
+            if (!user) {
+              await firebase.auth().signInAnonymously();
+            }
+
+            this.setState({
+              uid: user.uid,
+              messages: [
+                [this.state.messages],
+                {
+                  _id: this.props.route.params.name,
+                  text: this.props.route.params.name + " has entered the chat",
+                  createdAt: new Date(),
+                  system: true,
+                },
+              ],
+              user: {
+                _id: user.uid,
+                name: this.state.user.name,
+                avatar: "https://placeimg.com/140/140/any",
+              },
+            });
+          });
+        this.saveMessages();
+      } else {
+        this.setState({ isConnected: false });
+        console.log("offline");
+        this.getMessages();
+      }
+    });
+
     this.referenceChatMessages = firebase.firestore().collection("messages");
     if (
       this.referenceChatMessages !== undefined &&
@@ -101,45 +146,6 @@ export default class ChatScreen extends Component {
     } else {
       alert("Something is wrong!");
     }
-
-    //Check if the user is online or offline
-    NetInfo.fetch().then((connection) => {
-      if (connection.isConnected) {
-        console.log("online");
-      } else {
-        console.log("offline");
-      }
-    });
-
-    // use firebase.auth() to authenticate a user
-    this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
-      if (!user) {
-        await firebase.auth().signInAnonymously();
-      }
-
-      this.setState({
-        uid: user.uid,
-        messages: [
-          [this.state.messages],
-          {
-            _id: this.props.route.params.name,
-            text: this.props.route.params.name + " has entered the chat",
-            createdAt: new Date(),
-            system: true,
-          },
-        ],
-        user: {
-          _id: user.uid,
-          name: this.state.user.name,
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      });
-
-      // This listens for updates made to the collection
-      this.unsubscribe = this.referenceChatMessages
-        .orderBy("createdAt", "desc")
-        .onSnapshot(this.onCollectionUpdate);
-    });
   }
 
   componentWillUnmount() {
@@ -159,11 +165,13 @@ export default class ChatScreen extends Component {
         text: data.text,
         createdAt: data.createdAt.toDate(),
         user: data.user,
+        system: data.system,
       });
     });
     this.setState({
       messages,
     });
+    this.saveMessages();
   };
 
   //add messages to the database
@@ -190,7 +198,7 @@ export default class ChatScreen extends Component {
     );
   }
 
-  // A function to customize the faetures of the render bubble prop
+  // A function to customize the features of the render bubble prop
   renderBubble(props) {
     return (
       <Bubble
@@ -249,7 +257,7 @@ export default class ChatScreen extends Component {
         ) : null}
         <GiftedChat
           renderBubble={this.renderBubble.bind(this)}
-          renderSystemMessage={this.renderSystemMessage.bind(this)}
+          renderInputToolbar={this.renderInputToolbar.bind(this)}
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={{
