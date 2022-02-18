@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Platform,
   KeyboardAvoidingView,
+  Image,
 } from "react-native";
 import {
   Bubble,
@@ -13,11 +14,12 @@ import {
   InputToolbar,
   SystemMessage,
 } from "react-native-gifted-chat";
-import { initializeApp } from "firebase/app";
 import * as firebase from "firebase";
 import "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
+import CustomActions from "./CustomActions";
+import MapView from "react-native-maps";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-HCJXQRRhSnHO49ztWU3EgIhTiHsL3rk",
@@ -41,6 +43,8 @@ export default class ChatScreen extends Component {
         avatar: "",
       },
       isConnected: true,
+      image: null,
+      location: null,
     };
 
     if (!firebase.apps.length) {
@@ -152,9 +156,11 @@ export default class ChatScreen extends Component {
       let data = doc.data();
       messages.push({
         _id: data._id,
-        text: data.text,
+        text: data.text || "",
         createdAt: data.createdAt.toDate(),
         user: data.user,
+        image: data.image || null,
+        location: data.location || null,
         system: data.system,
       });
     });
@@ -171,7 +177,11 @@ export default class ChatScreen extends Component {
       _id: message._id,
       text: message.text,
       createdAt: message.createdAt,
-      user: this.state.user,
+      user: message.user,
+      avatar: "https://facebook.github.io/react-native/img/header_logo.png",
+      /* image: message.image || null, */
+      image: "https://facebook.github.io/react-native/img/header_logo.png",
+      location: message.location || null,
     });
   }
 
@@ -226,6 +236,28 @@ export default class ChatScreen extends Component {
     );
   }
 
+  renderCustomActions(props) {
+    return <CustomActions {...props} />;
+  }
+
+  renderCustomView(props) {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={styles.map}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  }
+
   render() {
     // name was passed  as prop from startscreen using navigate
     let name = this.props.route.params.name;
@@ -251,10 +283,12 @@ export default class ChatScreen extends Component {
           messages={this.state.messages}
           onSend={(messages) => this.onSend(messages)}
           user={{
-            _id: this.state.user._id,
-            name: this.state.name,
+            _id: this.state.uid,
+            name: name,
             avatar: this.state.user.avatar,
           }}
+          renderActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
         />
       </View>
     );
@@ -269,5 +303,19 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "300",
     color: "white",
+  },
+  button: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  image: {
+    width: 200,
+    height: 200,
+  },
+  map: {
+    width: 150,
+    height: 100,
+    borderRadius: 13,
+    margin: 3,
   },
 });
