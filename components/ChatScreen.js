@@ -179,8 +179,8 @@ export default class ChatScreen extends Component {
       createdAt: message.createdAt,
       user: message.user,
       avatar: "https://facebook.github.io/react-native/img/header_logo.png",
-      /* image: message.image || null, */
-      image: "https://facebook.github.io/react-native/img/header_logo.png",
+      image: message.image || null,
+      /*       image: "https://facebook.github.io/react-native/img/header_logo.png", */
       location: message.location || null,
     });
   }
