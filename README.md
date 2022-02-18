@@ -42,7 +42,7 @@ This App is a chat app built for mobile devices using React Native that provides
 ## Dependencies
 
 ```bash
-![Screenshot](assets/screenshot.png) 
+![Screenshot](assets/dependencies.png) 
 ```
 
 ## Author
