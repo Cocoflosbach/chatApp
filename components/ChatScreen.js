@@ -2,11 +2,9 @@ import React, { Component } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   Platform,
   KeyboardAvoidingView,
-  Image,
 } from "react-native";
 import {
   Bubble,
@@ -36,7 +34,6 @@ export default class ChatScreen extends Component {
     this.state = {
       messages: [],
       uid: "0",
-      loggedInText: "",
       user: {
         _id: "",
         name: "",
@@ -115,7 +112,7 @@ export default class ChatScreen extends Component {
 
             this.setState({
               uid: user.uid,
-
+              messages: [],
               user: {
                 _id: user.uid,
                 name: this.state.user.name,
@@ -153,7 +150,7 @@ export default class ChatScreen extends Component {
     // go through each document
     querySnapshot.forEach((doc) => {
       // get the QueryDocumentSnapshot's data
-      let data = doc.data();
+      const data = doc.data();
       messages.push({
         _id: data._id,
         text: data.text || "",
@@ -175,11 +172,10 @@ export default class ChatScreen extends Component {
     const message = this.state.messages[0];
     this.referenceChatMessages.add({
       _id: message._id,
-      text: message.text,
+      text: message.text || "",
       createdAt: message.createdAt,
-      user: message.user,
-      avatar: "https://facebook.github.io/react-native/img/header_logo.png",
-      image: message.image || null,
+      user: this.state.user,
+      image: message.image || "",
       /*       image: "https://facebook.github.io/react-native/img/header_logo.png", */
       location: message.location || null,
     });
@@ -245,7 +241,12 @@ export default class ChatScreen extends Component {
     if (currentMessage.location) {
       return (
         <MapView
-          style={styles.map}
+          style={{
+            width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3,
+          }}
           region={{
             latitude: currentMessage.location.latitude,
             longitude: currentMessage.location.longitude,
