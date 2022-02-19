@@ -25,10 +25,10 @@ export default class StartScreen extends Component {
 
   // Chat background color options to choose from
   colors = {
-    peach: "#F7D4BC",
+    pink: "#820263",
     indigo: "#360568",
     green: "#283845",
-    pink: "#CFA5B4",
+    blue: "#192A51",
   };
 
   // this finction is called when a color is chosen
@@ -39,7 +39,7 @@ export default class StartScreen extends Component {
   };
 
   render() {
-    const { peach, indigo, green, pink } = this.colors;
+    const { pink, indigo, green, blue } = this.colors;
     return (
       <View style={styles.container}>
         <ImageBackground
@@ -67,10 +67,10 @@ export default class StartScreen extends Component {
               <View style={styles.colorBox}>
                 <TouchableOpacity
                   accessible={true}
-                  accessibilityLabel="peach"
-                  accessibilityHint="choose peach background"
+                  accessibilityLabel="pink"
+                  accessibilityHint="choose pink background"
                   style={styles.color1}
-                  onPress={() => this.changeBackgroundColor(peach)}
+                  onPress={() => this.changeBackgroundColor(pink)}
                 ></TouchableOpacity>
                 <TouchableOpacity
                   accessible={true}
@@ -88,10 +88,10 @@ export default class StartScreen extends Component {
                 ></TouchableOpacity>
                 <TouchableOpacity
                   accessible={true}
-                  accessibilityLabel="pink"
-                  accessibilityHint="choose pink background"
+                  accessibilityLabel="blue"
+                  accessibilityHint="choose blue background"
                   style={styles.color4}
-                  onPress={() => this.changeBackgroundColor(pink)}
+                  onPress={() => this.changeBackgroundColor(blue)}
                 ></TouchableOpacity>
               </View>
             </View>
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
 
   color1: {
-    backgroundColor: "#F7D4BC",
+    backgroundColor: "#820263",
     height: 50,
     width: 50,
     borderRadius: 25,
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   color4: {
-    backgroundColor: "#CFA5B4",
+    backgroundColor: "#192A51",
     height: 50,
     width: 50,
     borderRadius: 25,
