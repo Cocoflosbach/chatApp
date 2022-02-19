@@ -19,7 +19,7 @@ export default class CustomActions extends Component {
         }).catch((error) => console.log(error));
 
         if (!result.cancelled) {
-          const imageUrl = await this.uploadImageFetch(result.uri);
+          const imageUrl = await this.uploadImage(result.uri);
           this.props.onSend({ image: imageUrl });
         }
       }
@@ -38,7 +38,7 @@ export default class CustomActions extends Component {
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
         }).catch((error) => console.log(error));
         if (!result.cancelled) {
-          const imageUrl = await this.uploadImageFetch(result.uri);
+          const imageUrl = await this.uploadImage(result.uri);
           this.props.onSend({ image: imageUrl });
         }
       }
@@ -47,7 +47,7 @@ export default class CustomActions extends Component {
     }
   };
 
-  // A Function to enable users record audio with their device
+  /* // A Function to enable users record audio with their device
   recordAudio = async () => {
     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
 
@@ -70,7 +70,7 @@ export default class CustomActions extends Component {
         // An error occured!
       }
     }
-  };
+  }; */
 
   // A Function to get the location of the user by using GPS
   getLocation = async () => {
@@ -80,8 +80,7 @@ export default class CustomActions extends Component {
         const result = await Location.getCurrentPositionAsync({}).catch(
           (error) => console.log(error)
         );
-        /* const longitude = JSON.stringify(result.coords.longitude);
-        const latitude = JSON.stringify(result.coords.latitude); */
+
         if (result) {
           this.props.onSend({
             location: {
@@ -107,7 +106,7 @@ export default class CustomActions extends Component {
   }
 */
 
-  uploadImageFetch = async (uri) => {
+  uploadImage = async (uri) => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
@@ -125,8 +124,12 @@ export default class CustomActions extends Component {
     const imageNameBefore = uri.split("/");
     const imageName = imageNameBefore[imageNameBefore.length - 1];
 
-    const ref = firebase.storage().ref().child(`images/${imageName}`);
-    const snapshot = await ref.put(blob);
+    const firebaseStorage = firebase
+      .storage()
+      .ref()
+      .child(`images/${imageName}`);
+
+    const snapshot = await firebaseStorage.put(blob);
 
     blob.close();
 
